@@ -1,85 +1,84 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import useCaptcha from '@/hooks/useCaptcha'
 import useRegister from './useRegister'
-import useRegisterVerify from './useRegisterVerify'
+import useRules from './useRules'
 
-const router = useRouter()
+const onClickLeft = () => history.back() // 返回
 
-// 点击导航栏的返回图标
-const onClickLeft = () => history.back()
-
-// 验证码的一系列操作
-let { vcImg, switchVcImg } = useCaptcha()
-// 初始化验证码
-switchVcImg()
+let { captchaUrl, switchCaptcha } = useCaptcha()
+switchCaptcha() // 验证码
 
 // 使用注册的钩子函数
-const { rForm, handleRegister } = useRegister(router, switchVcImg)
+const { regForm, handleRegister } = useRegister(switchCaptcha)
 // 表单校验规则
-const { rules } = useRegisterVerify(rForm)
+const { rules } = useRules(regForm)
 </script>
 
 <template>
-  <!-- 注册导航条 -->
-  <NavBarTheme>
-    <van-nav-bar title="注册" left-arrow @click-left="onClickLeft" />
-  </NavBarTheme>
+  <!-- 导航条 -->
+  <van-nav-bar title="注册" left-arrow @click-left="onClickLeft" />
 
   <div class="register">
     <van-form colon @submit="handleRegister" ref="registerRef">
       <van-cell-group inset>
         <van-field
-          v-model="rForm.uname"
-          name="uname"
+          :border="false"
+          class="bottom-line"
+          v-model="regForm.name"
+          name="name"
           label="用户名"
           placeholder="请输入用户名"
           clearable
           required
-          :rules="rules.uname"
+          :rules="rules.name"
         />
         <van-field
-          v-model="rForm.pwd"
+          :border="false"
+          class="bottom-line"
+          v-model="regForm.password"
           type="password"
-          name="pwd"
+          name="password"
           label="密码"
           placeholder="请输入密码"
           clearable
           required
-          :rules="rules.pwd"
+          :rules="rules.password"
         />
         <van-field
-          v-model="rForm.confirmPwd"
+          :border="false"
+          class="bottom-line"
+          v-model="regForm.okpassword"
           type="password"
-          name="confirmPwd"
+          name="okpassword"
           label="确认密码"
           placeholder="请再次输入密码"
           clearable
           required
-          :rules="rules.confirmPwd"
+          :rules="rules.okpassword"
         />
-        <van-field
-          v-model="rForm.captcha"
-          name="vc"
-          label="验证码"
-          placeholder="请输入验证码"
-          clearable
-          required
-          :rules="rules.captcha"
-        >
-          <template #button>
-            <van-image
-              radius="10"
-              round
-              width="106"
-              height="40"
-              fit="fill"
-              :src="vcImg"
-              @click="switchVcImg"
-            />
-          </template>
-        </van-field>
+        <div :class="['captcha', 'bottom-line']">
+          <van-field
+            class="input"
+            v-model="regForm.captcha"
+            name="captcha"
+            label="验证码"
+            placeholder="请输入验证码"
+            clearable
+            required
+            :rules="rules.captcha"
+          />
+          <van-image
+            class="captcha-img"
+            radius="10"
+            round
+            fit="fill"
+            :src="captchaUrl"
+            @click="switchCaptcha"
+          />
+        </div>
       </van-cell-group>
+
+      <!-- 注册按钮 -->
       <div style="margin: 16px">
         <van-config-provider>
           <van-button round block type="primary" native-type="submit"> 注册 </van-button>
@@ -89,8 +88,29 @@ const { rules } = useRegisterVerify(rForm)
   </div>
 </template>
 
-<style lang="less">
+<style lang="less" scoped>
 .register {
-  margin-top: 80px;
+  margin-top: 60px;
+
+  // 验证码
+  .captcha {
+    position: relative;
+    .input {
+      width: 66%;
+      z-index: 2;
+    }
+    .captcha-img {
+      position: absolute;
+      z-index: 1;
+      height: 90px;
+      top: -14px;
+      right: -16px;
+    }
+  }
+
+  .bottom-line {
+    border-bottom: 1px solid #f5f5f5;
+    margin-bottom: 26px;
+  }
 }
 </style>

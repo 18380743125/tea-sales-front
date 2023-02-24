@@ -1,12 +1,16 @@
 import { ref } from 'vue'
+import { BASE_URL } from '@/service/config'
+import throttle from '@/utils/throttle'
 
 export default function switchCaptcha() {
-  // 验证码图片链接
-  const vcImg = ref('')
+  const captchaUrl = ref(`${BASE_URL}/api/v1/auth/captcha?t=${Math.random()}`)
+
   // 切换验证码
-  function switchVcImg() {}
+  function switchCaptcha() {
+    captchaUrl.value = `${BASE_URL}/api/v1/auth/captcha?t=${Math.random()}`
+  }
   return {
-    vcImg,
-    switchVcImg
+    captchaUrl,
+    switchCaptcha: throttle(switchCaptcha, 300, {})
   }
 }

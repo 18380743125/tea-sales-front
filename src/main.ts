@@ -3,6 +3,7 @@ import App from './App.vue'
 import registerStore from './store'
 import registerRouter from './router'
 import 'normalize.css'
+import '@/assets/css/vant.less'
 
 const app = createApp(App)
 

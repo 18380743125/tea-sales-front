@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import 'vant/es/toast/style'
+</script>
 
 <template>
   <RouterView />

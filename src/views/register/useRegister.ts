@@ -1,18 +1,18 @@
 import { reactive } from 'vue'
 import { Toast } from 'vant'
-import type { Router } from 'vue-router'
+import type { IRegisterForm } from '@/types/user'
 
-export default function useRegister(router: Router, switchVcImg: Function) {
-  const rForm = reactive({
-    uname: '',
-    pwd: '',
-    confirmPwd: '',
+export default function useRegister(switchCaptcha: Function) {
+  const regForm = reactive({
+    name: '',
+    password: '',
+    okpassword: '',
     captcha: ''
-  })
+  } as IRegisterForm)
 
   function handleRegister() {}
   return {
-    rForm,
+    regForm,
     handleRegister
   }
 }

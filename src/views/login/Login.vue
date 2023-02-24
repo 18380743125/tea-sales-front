@@ -1,48 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import useCaptcha from '@/hooks/useCaptcha'
-import useLoginVerify from './useLoginVerify'
-import useHandleLogin from './useHandleLogin'
+import useRules from './useRules'
+import useLogin from './useLogin'
 
-const router = useRouter()
+const onClickLeft = () => history.back() // 返回点击
 
-// 登录按钮是否激活
-let isCanClick = ref(false)
-// 表单的实例对象
-let loginRef = ref(null)
+// hooks
+// 验证码
+let { captchaUrl, switchCaptcha } = useCaptcha()
+switchCaptcha()
 
-// 点击导航栏的返回图标
-const onClickLeft = () => history.back()
+// 表单规则
+const { rules, formRef, isCanClick, handleBlur } = useRules()
 
-// 当每个字段失去焦点时触发, 控制登录按钮是否激活
-const handleBlur = () => {
-  const loginRefVal: any = loginRef.value
-  loginRefVal.validate(['uname', 'pwd', 'vc']).then(
-    () => {
-      isCanClick.value = true
-    },
-    () => {
-      isCanClick.value = false
-    }
-  )
-}
-// 验证码的一系列操作
-let { vcImg, switchVcImg } = useCaptcha()
-// 初始化验证码
-switchVcImg()
-// 验证规则
-const { rules } = useLoginVerify()
-// 去登陆
-const { uname, pwd, verifyCode, onSubmit } = useHandleLogin(router, switchVcImg, isCanClick)
+// 登陆
+const { loginForm, onSubmit } = useLogin(switchCaptcha, isCanClick)
 </script>
 
 <template>
   <div class="wrapper">
-    <!-- 自定义导航栏主题 -->
-    <NavBarTheme>
-      <van-nav-bar title="登录" left-arrow @click-left="onClickLeft" />
-    </NavBarTheme>
+    <!-- 导航条 -->
+    <van-nav-bar title="登录" left-arrow @click-left="onClickLeft" />
 
     <!-- 欢迎 -->
     <div class="welcome">
@@ -55,89 +33,94 @@ const { uname, pwd, verifyCode, onSubmit } = useHandleLogin(router, switchVcImg,
     </div>
 
     <!-- 登录表单 -->
-    <div class="login">
-      <van-form colon @submit="onSubmit" ref="loginRef" validate-first submit-on-enter>
-        <van-cell-group inset>
+    <van-form class="login" colon submit-on-enter ref="formRef" @submit="onSubmit">
+      <van-cell-group inset>
+        <!-- 用户名 -->
+        <van-field
+          class="bottom-line"
+          :border="false"
+          v-model="loginForm.name"
+          name="name"
+          label="用户名"
+          placeholder="请输入用户名"
+          clearable
+          required
+          :rules="rules.name"
+          @blur="handleBlur"
+        />
+        <!-- 密码 -->
+        <van-field
+          class="bottom-line"
+          :border="false"
+          v-model="loginForm.password"
+          type="password"
+          name="password"
+          label="密码"
+          placeholder="请输入密码"
+          clearable
+          required
+          :rules="rules.password"
+          @blur="handleBlur"
+        />
+        <!-- 验证码 -->
+        <div :class="['captcha', 'bottom-line']">
           <van-field
-            v-model="uname"
-            name="uname"
-            label="用户名"
-            placeholder="请输入用户名"
-            clearable
-            required
-            :rules="rules.uname"
-            @blur="handleBlur"
-          />
-          <van-field
-            v-model="pwd"
-            type="password"
-            name="pwd"
-            label="密码"
-            placeholder="请输入密码"
-            clearable
-            required
-            :rules="rules.pwd"
-            @blur="handleBlur"
-          />
-          <van-field
-            v-model="verifyCode"
-            name="vc"
+            :border="false"
+            class="input"
+            v-model="loginForm.captcha"
+            name="captcha"
             label="验证码"
             placeholder="请输入验证码"
-            clearable
             required
+            clearable
             :rules="rules.captcha"
             @blur="handleBlur"
           >
-            <template #button>
-              <van-image
-                radius="10"
-                round
-                width="106"
-                height="40"
-                fit="fill"
-                :src="vcImg"
-                @click="switchVcImg"
-              />
-            </template>
           </van-field>
-        </van-cell-group>
-        <div style="margin: 16px">
-          <van-config-provider>
-            <van-button :disabled="!isCanClick" round block type="primary" native-type="submit">
-              登录
-            </van-button>
-          </van-config-provider>
+          <van-image
+            class="captcha-img"
+            radius="10"
+            fit="fill"
+            :src="captchaUrl"
+            @click="switchCaptcha"
+          />
         </div>
-      </van-form>
+      </van-cell-group>
 
-      <!-- 去注册 -->
-      <van-row justify="center">
-        <van-col>
-          <div class="register">
-            <span>还没有账号? </span>
-            <router-link to="/register" style="color: #fe8e50">马上注册</router-link>
-          </div>
-        </van-col>
-      </van-row>
-    </div>
+      <!-- 登录按钮 -->
+      <div style="margin: 16px">
+        <van-button :disabled="!isCanClick" round block type="primary" native-type="submit">
+          登录
+        </van-button>
+      </div>
+    </van-form>
+
+    <!-- 去注册 -->
+    <van-row justify="center">
+      <van-col>
+        <div class="register">
+          <span>还没有账号? </span>
+          <router-link to="/register">马上注册</router-link>
+        </div>
+      </van-col>
+    </van-row>
   </div>
 </template>
 
 <style lang="less" scoped>
 .wrapper {
-  position: relative;
   // 欢迎词
   .welcome {
     position: relative;
     .text {
-      color: #504f52;
+      color: #a0a0a0;
       margin-left: 60px;
       height: 240px;
       line-height: 240px;
       font-size: 50px;
       position: relative;
-      z-index: 2;
+      z-index: 1;
+      letter-spacing: 6px;
     }
     .bg-welcome {
       color: #f8f8f8;
@@ -148,17 +131,23 @@ const { uname, pwd, verifyCode, onSubmit } = useHandleLogin(router, switchVcImg,
     }
   }
   // 登录模块
-  // .login {
-  // }
-  // 忘记密码
-  .forget {
-    position: relative;
-    margin-left: 20px;
-    color: #4aa1fc;
-    text-align: center;
-    font-size: 30px;
-    margin-top: 46px;
+  .login {
+    .captcha {
+      position: relative;
+      .input {
+        width: 67%;
+        z-index: 2;
+      }
+      .captcha-img {
+        position: absolute;
+        z-index: 1;
+        height: 90px;
+        top: -14px;
+        right: -16px;
+      }
+    }
   }
+
   // 去注册
   .register {
     font-size: 32px;
@@ -171,6 +160,11 @@ const { uname, pwd, verifyCode, onSubmit } = useHandleLogin(router, switchVcImg,
       color: #48a4fd;
       margin-left: 26px;
     }
+  }
+
+  .bottom-line {
+    border-bottom: 1px solid #f5f5f5;
+    margin-bottom: 20px;
   }
 }
 </style>
