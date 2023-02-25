@@ -9,4 +9,5 @@ function registerStore(app: App<Element>) {
   app.use(pinia)
 }
 
+export { pinia }
 export default registerStore

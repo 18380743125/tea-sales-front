@@ -1,10 +1,26 @@
-import { BASE_URL } from './config/index'
+import { showToast } from 'vant'
 import BRequest from './request'
-import { TIME_OUT } from './config'
+import { BASE_URL, TIME_OUT } from './config'
+import { router } from '@/router'
 import { localCache } from '@/utils/cache'
 import { ConstEnum } from '@/enum/constant.enum'
 import { ErrorEnum } from '@/enum/error.enum'
-import { showToast } from 'vant'
+
+// 错误信息对象
+const errorInfoObj = {
+  [ErrorEnum.SERVER]: '服务器异常！',
+  [ErrorEnum.PARAMS]: '参数错误！',
+  [ErrorEnum.UNAUTHORIZED]: '请先登录！',
+  [ErrorEnum.LOGIN_EXPIRES]: '登录已过期！',
+  [ErrorEnum.NO_ADMIN_AUTH]: '无管理员权限！',
+  [ErrorEnum.FORBIDDEN]: '禁止访问！',
+  [ErrorEnum.NO_EXISTS]: '操作不存在！',
+  [ErrorEnum.CAPTCHA_ERROR]: '验证码错误！',
+  [ErrorEnum.CAPTCHA_EXPIRES]: '验证码过期！',
+  [ErrorEnum.LOGIN_ERROR]: '用户名或密码错误！'
+}
+// 需要重新登录
+const relist = [ErrorEnum.UNAUTHORIZED, ErrorEnum.LOGIN_EXPIRES]
 
 const bRequest = new BRequest({
   timeout: TIME_OUT,
@@ -20,38 +36,17 @@ const bRequest = new BRequest({
       return config
     },
     responseSuccessFn(res: any) {
-      // 通用错误处理
+      // 统一响应错误处理
       const msg = res.message
-      switch (msg) {
-        case ErrorEnum.SERVER:
-          showToast('服务器异常！')
-          break
-        case ErrorEnum.PARAMS:
-          showToast('参数错误！')
-          break
-        case ErrorEnum.UNAUTHORIZED:
+      if (msg !== 'ok') {
+        const errorInfo = errorInfoObj[msg] || '无知错误！'
+        showToast(errorInfo)
+        if (relist.includes(msg)) {
           localCache.clear()
-          showToast('请先登录！')
-          break
-        case ErrorEnum.NO_ADMIN_AUTH:
-          localCache.clear()
-          showToast('无管理员权限！')
-          break
-        case ErrorEnum.PASSWORD_ERROR:
-          showToast('密码错误！')
-          break
-        case ErrorEnum.FORBIDDEN:
-          showToast('禁止访问！')
-          break
-        case ErrorEnum.NO_EXISTS:
-          showToast('操作不存在！')
-          break
-        case ErrorEnum.CAPTCHA_ERROR:
-          showToast('验证码错误')
-          break
-        case ErrorEnum.LOGIN_ERROR:
-          showToast('用户名或密码错误')
-          break
+          setTimeout(() => {
+            router.push('/login')
+          }, 2000)
+        }
       }
       return res
     }

@@ -1,11 +1,26 @@
-<template>
-  <div class="home">home</div>
-</template>
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useHomeStore } from '@/store/home'
+import GoodsListV1 from '@/components/goods-list-v1/GoodsListV1.vue'
+import HomeSwipe from './c-cpns/HomeSwipe.vue'
 
-<script setup lang="ts"></script>
+const homeStore = useHomeStore()
+// 网络请求
+homeStore.fetchHomeDataAction()
+
+const { goods, swipes } = storeToRefs(homeStore)
+</script>
+
+<template>
+  <div class="home">
+    <!-- 轮播图 -->
+    <HomeSwipe :swipes="swipes" />
+    <GoodsListV1 :list="goods" />
+  </div>
+</template>
 
 <style lang="less" scoped>
 .home {
-  font-size: 26px;
+  background-color: #f5f5f5;
 }
 </style>

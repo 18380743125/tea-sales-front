@@ -1,22 +1,31 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import type { FormInstance } from 'vant'
 import useCaptcha from '@/hooks/useCaptcha'
+import useFormDisable from '@/hooks/useFormDisable'
 import useRegister from './useRegister'
 import useRules from './useRules'
 
-const onClickLeft = () => history.back() // 返回
+const registerRef = ref<FormInstance>()
 
-let { captchaUrl, switchCaptcha } = useCaptcha()
-switchCaptcha() // 验证码
+// hooks
+const { isCanClick, handleBlur } = useFormDisable(registerRef, 4)
+const { captchaUrl, switchCaptcha } = useCaptcha()
 
-// 使用注册的钩子函数
+const onClickLeft = () => history.back()
+
+switchCaptcha()
+
+// hooks
 const { regForm, handleRegister } = useRegister(switchCaptcha)
-// 表单校验规则
 const { rules } = useRules(regForm)
 </script>
 
 <template>
   <!-- 导航条 -->
-  <van-nav-bar title="注册" left-arrow @click-left="onClickLeft" />
+  <van-nav-bar left-arrow @click-left="onClickLeft">
+    <template #title><span style="letter-spacing: 1px">注册</span></template>
+  </van-nav-bar>
 
   <div class="register">
     <van-form colon @submit="handleRegister" ref="registerRef">
@@ -31,6 +40,7 @@ const { rules } = useRules(regForm)
           clearable
           required
           :rules="rules.name"
+          @blur="handleBlur"
         />
         <van-field
           :border="false"
@@ -43,6 +53,7 @@ const { rules } = useRules(regForm)
           clearable
           required
           :rules="rules.password"
+          @blur="handleBlur"
         />
         <van-field
           :border="false"
@@ -55,6 +66,7 @@ const { rules } = useRules(regForm)
           clearable
           required
           :rules="rules.okpassword"
+          @blur="handleBlur"
         />
         <div :class="['captcha', 'bottom-line']">
           <van-field
@@ -66,6 +78,7 @@ const { rules } = useRules(regForm)
             clearable
             required
             :rules="rules.captcha"
+            @blur="handleBlur"
           />
           <van-image
             class="captcha-img"
@@ -81,7 +94,9 @@ const { rules } = useRules(regForm)
       <!-- 注册按钮 -->
       <div style="margin: 16px">
         <van-config-provider>
-          <van-button round block type="primary" native-type="submit"> 注册 </van-button>
+          <van-button :disabled="!isCanClick" round block type="primary" native-type="submit">
+            <span style="letter-spacing: 2px">注册</span>
+          </van-button>
         </van-config-provider>
       </div>
     </van-form>

@@ -3,7 +3,11 @@ import 'vant/es/toast/style'
 </script>
 
 <template>
-  <RouterView />
+  <div class="app"><RouterView /></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app {
+  height: 100vh;
+}
+</style>

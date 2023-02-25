@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import type { FormInstance } from 'vant'
 import useCaptcha from '@/hooks/useCaptcha'
+import useFormDisable from '@/hooks/useFormDisable'
 import useRules from './useRules'
 import useLogin from './useLogin'
-
+const formRef = ref<FormInstance>() // 登录表单实例
 const onClickLeft = () => history.back() // 返回点击
 
 // hooks
@@ -11,16 +14,19 @@ let { captchaUrl, switchCaptcha } = useCaptcha()
 switchCaptcha()
 
 // 表单规则
-const { rules, formRef, isCanClick, handleBlur } = useRules()
+const { rules } = useRules()
+const { isCanClick, handleBlur } = useFormDisable(formRef, 3)
 
-// 登陆
+// 登录
 const { loginForm, onSubmit } = useLogin(switchCaptcha, isCanClick)
 </script>
 
 <template>
   <div class="wrapper">
     <!-- 导航条 -->
-    <van-nav-bar title="登录" left-arrow @click-left="onClickLeft" />
+    <van-nav-bar left-arrow @click-left="onClickLeft">
+      <template #title><span style="letter-spacing: 1px">登录</span></template>
+    </van-nav-bar>
 
     <!-- 欢迎 -->
     <div class="welcome">
@@ -89,7 +95,14 @@ const { loginForm, onSubmit } = useLogin(switchCaptcha, isCanClick)
 
       <!-- 登录按钮 -->
       <div style="margin: 16px">
-        <van-button :disabled="!isCanClick" round block type="primary" native-type="submit">
+        <van-button
+          style="letter-spacing: 2px"
+          :disabled="!isCanClick"
+          round
+          block
+          type="primary"
+          native-type="submit"
+        >
           登录
         </van-button>
       </div>

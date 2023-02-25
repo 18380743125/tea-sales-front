@@ -1,5 +1,13 @@
 import bRequest from '../index'
-import type { IPassword, IUpdateUser } from '@/types/user'
+import type { IPassword, IRegisterForm, IUpdateUser } from '@/types/user'
+
+// 用户注册
+export function registerReq(data: IRegisterForm) {
+  return bRequest.post({
+    url: '/api/v1/user',
+    data
+  })
+}
 
 // 修改密码
 export function updatePwdReq(params: IPassword) {
@@ -9,7 +17,7 @@ export function updatePwdReq(params: IPassword) {
   })
 }
 
-// 更改密码
+// 更改用户信息
 export function updateUserReq(id: number, params: IUpdateUser) {
   return bRequest.patch({
     url: `/api/v1/user/${id}`,

@@ -29,3 +29,11 @@ export function getDiscountByGoodsId(id: number) {
     url: `/api/v1/discounts/goods/${id}`
   })
 }
+
+// 查询折扣信息
+export function getDiscountReq(params: IQueryGoods) {
+  return bRequest.get({
+    url: '/api/v1/discounts',
+    params
+  })
+}

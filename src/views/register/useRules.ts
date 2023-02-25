@@ -1,14 +1,14 @@
 import type { IRegisterForm } from '@/types/user'
+import type { FieldRule } from 'vant'
 
 export default function useRules(regForm: IRegisterForm) {
   // 验证规则
-  const verifyName = (value: string) => (value.length < 4 || value.length > 16 ? false : true)
   const verifyCaptcha = (value: string) => (value.length === 4 ? true : false)
   const verifyOkPassword = (value: string) => regForm.password === value
   const rules = {
     name: [
       { required: true, message: '请输入用户名' },
-      { validator: verifyName, message: '用户名限制在4~16字符内' }
+      { pattern: /^\w{4,16}$/, message: '用户名长度在4~16位内, 由字母、数字、下划线组成' }
     ],
     password: [
       { required: true, message: '请输入密码' },
@@ -25,7 +25,7 @@ export default function useRules(regForm: IRegisterForm) {
       { required: true, message: '请输入验证码' },
       { validator: verifyCaptcha, message: '验证码为4位' }
     ]
-  }
+  } as Record<string, FieldRule[]>
   return {
     rules
   }
