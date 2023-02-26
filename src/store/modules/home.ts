@@ -20,13 +20,12 @@ function _getSwipes(goods: Array<Record<string, any>>) {
 }
 
 export const useHomeStore = defineStore('home', {
-  state: () =>
-    ({
-      page: 1,
-      isMore: true,
-      goods: [],
-      swipes: []
-    } as IHomeState),
+  state: (): IHomeState => ({
+    page: 1,
+    isMore: true,
+    goods: [],
+    swipes: []
+  }),
   actions: {
     fetchHomeDataAction() {
       if (!this.isMore) return

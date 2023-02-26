@@ -1,19 +1,30 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import { goodsImgUrl } from '@/utils/goods.util'
-import { useCartStore } from '../../store/cart'
+import { useCartStore } from '@/store/modules/cart'
 
+import type { Ref } from 'vue'
+import type CartBar from '@/components/CartBar.vue'
+
+// props
 defineProps<{
   item: Record<string, any>
 }>()
 
+// inject
+const cartBarRef = inject<Ref<InstanceType<typeof CartBar>>>('cartBarRef')
+
+// store
 const cartStore = useCartStore()
 
 // 加入购物车
-const addCart = (item: Record<string, any>) => {
+const addCart = (e: Event, item: Record<string, any>) => {
   const carts = item.goods.carts
   if (carts.length === 0) carts.push({ count: 1 })
   else carts[0].count++
   cartStore.addCartAction({ goodsId: item.goods.id, count: 1 })
+  // 动画效果
+  cartBarRef?.value.addCart(e.currentTarget as HTMLElement)
 }
 
 const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).toFixed(2)
@@ -56,8 +67,7 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
       <!-- 额外信息 -->
       <div class="extra">
         <div class="desc">{{ item.goods.description }}</div>
-
-        <div class="cart" @click="addCart(item)">
+        <div class="cart" @click="addCart($event, item)">
           <van-badge :show-zero="false" :content="item.goods?.carts[0]?.count ?? 0" :max="99">
             <van-icon name="shopping-cart-o" />
           </van-badge>
@@ -78,7 +88,7 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
   }
 
   .brief {
-    padding-bottom: 10px;
+    padding-bottom: 14px;
     display: flex;
     font-size: 27px;
     .weight {
@@ -93,7 +103,7 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
   }
   // 价格
   .price {
-    padding: 10px 0;
+    padding: 14px 0;
     margin-left: -6px;
     display: flex;
     align-items: center;
@@ -138,7 +148,7 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
       justify-content: center;
       font-size: 32px;
       margin-right: 12px;
-      padding: 8px;
+      padding: 9px;
       border-radius: 50%;
       color: #eee;
       position: relative;

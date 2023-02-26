@@ -1,10 +1,16 @@
 import { defineStore } from 'pinia'
+import { showSuccessToast } from 'vant'
+
 import { ConstEnum } from '@/enum/constant.enum'
 import { localCache } from '@/utils/cache'
 import { loginReq } from '@/service/modules/login'
 import type { Router } from 'vue-router'
 import type { ILoginForm } from '@/types/user'
-import { showSuccessToast } from 'vant'
+
+interface IUserState {
+  user: Record<string, any>
+  roles: Record<string, any>
+}
 
 interface LoginActionOptions {
   router: Router
@@ -12,7 +18,7 @@ interface LoginActionOptions {
 }
 
 export const useUserStore = defineStore('user', {
-  state: () => ({
+  state: (): IUserState => ({
     user: localCache.getCache(ConstEnum.USER ?? {}),
     roles: localCache.getCache(ConstEnum.ROLES ?? {})
   }),

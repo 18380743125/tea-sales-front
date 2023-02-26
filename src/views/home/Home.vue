@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useHomeStore } from '@/store/home'
+import { useHomeStore } from '@/store/modules/home'
 import GoodsListV1 from '@/components/goods-list-v1/GoodsListV1.vue'
 import HomeSwipe from './c-cpns/HomeSwipe.vue'
 

@@ -1,11 +1,9 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { Toast } from 'vant'
-import { useUserStore } from '@/store/user'
-import type { Ref } from 'vue'
+import { useUserStore } from '@/store/modules/user'
 import type { ILoginForm } from '@/types/user'
 
-export default function useHandleLogin(switchCaptcha: Function, isCanClick: Ref<boolean>) {
+export default function useHandleLogin(switchCaptcha: Function) {
   const loginForm = reactive({
     name: '',
     password: '',
