@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import 'vant/es/toast/style'
+import 'vant/es/dialog/style'
 </script>
 
 <template>

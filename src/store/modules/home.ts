@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { getDiscountReq } from '@/service/modules/goods'
 
 interface IHomeState {
-  page: number
   isMore: boolean
   goods: Array<Record<string, any>>
   swipes: Array<Record<string, any>>
@@ -21,19 +20,19 @@ function _getSwipes(goods: Array<Record<string, any>>) {
 
 export const useHomeStore = defineStore('home', {
   state: (): IHomeState => ({
-    page: 1,
     isMore: true,
     goods: [],
     swipes: []
   }),
   actions: {
-    fetchHomeDataAction() {
+    fetchHomeDataAction(page = 1) {
       if (!this.isMore) return
-      getDiscountReq({ page: this.page }).then((res) => {
+      getDiscountReq({ page }).then((res) => {
         const data = res.data
         if (res.message === 'ok') {
           if (data[0].length === 0) this.isMore = false
-          this.goods.push(...data[0])
+          if (page === 1) this.goods = data[0]
+          else this.goods.push(...data[0])
         }
         if (this.swipes.length < 6) {
           this.swipes.push(..._getSwipes(this.goods))

@@ -1,74 +1,26 @@
 <script setup lang="ts">
-import { ref, onUnmounted, onUpdated } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/store/modules/cart'
 import { useMainStore } from '@/store/modules/main'
-
-interface Pos {
-  x: number
-  y: number
-}
-
-const addCartRef = ref<HTMLElement>()
-const addCartInnerRef = ref<HTMLElement>()
-const cartRef = ref<HTMLElement>()
-const cartPos: Pos = { x: 0, y: 0 }
-const raf = ref<number>(0)
+import useAddCartAnimation from '../hooks/useAddCartAnimation'
 
 // store
 const cartStore = useCartStore()
 const mainStore = useMainStore()
-
 // 网络请求
 cartStore.queryCartAction()
 const { totalRealMoney, checkedNums, isCheckAll } = storeToRefs(cartStore)
 const { cartBar } = storeToRefs(mainStore)
 
-onUpdated(() => {
-  // 购物车的位置
-  if (cartPos.x !== 0) return
-  const rect = cartRef.value?.getBoundingClientRect()
-  cartPos.x = (rect?.left as number) + (rect?.width as number) / 5
-  cartPos.y = (rect?.top as number) - (rect?.height as number) / 3
-  // 监听事件
-  cartRef.value?.addEventListener('animationend', handleAnimationEnd)
-})
+// hooks
+const { addCartRef, addCartInnerRef, cartRef, start } = useAddCartAnimation()
 
-onUnmounted(() => {
-  cartRef.value?.removeEventListener('animationend', handleAnimationEnd)
-  cancelAnimationFrame(raf.value)
-})
-// 处理动画结束
-const handleAnimationEnd = () => {
-  cartRef.value?.classList.remove('cart-animation')
-  if (addCartRef.value) {
-    // 重置位置
-    addCartRef.value.style.display = 'none'
-  }
-}
-
-// 处理动画位置
+// 动画
 const addCart = (item: HTMLElement) => {
-  cartRef.value?.classList.add('cart-animation')
-  const itemRect = item.getBoundingClientRect()
-  const start = {
-    x: itemRect.left - itemRect.width / 5,
-    y: itemRect.top - itemRect.height / 5
-  }
-
-  if (addCartRef.value && addCartInnerRef.value) {
-    addCartRef.value.style.display = 'block'
-    addCartRef.value.style.transform = `translateX(${start.x}px`
-    addCartInnerRef.value.style.transform = `translateY(${start.y}px)`
-  }
-  raf.value = requestAnimationFrame(() => {
-    if (addCartRef.value && addCartInnerRef.value) {
-      addCartRef.value.style.transform = `translateX(${cartPos.x}px)`
-      addCartInnerRef.value.style.transform = `translateY(${cartPos.y}px)`
-    }
-  })
+  start(item)
 }
 
+// 处理全?不选
 const checkAllClick = () => {
   cartStore.checkAllAction()
 }
@@ -78,20 +30,20 @@ defineExpose({
 })
 </script>
 <template>
-  <div v-show="cartBar === 2" class="add-cart" ref="addCartRef">
+  <div class="add-cart" ref="addCartRef">
     <div ref="addCartInnerRef">+</div>
   </div>
 
   <div class="cart-bar">
     <div class="left">
-      <div v-if="cartBar === 2" class="cart" ref="cartRef">
+      <div v-show="cartBar === 2" class="cart" ref="cartRef">
         <van-badge :content="checkedNums">
           <van-icon name="cart" />
         </van-badge>
       </div>
-      <div v-else class="all-check" ref="cartRef">
-        <van-checkbox @click="checkAllClick" v-model="isCheckAll" icon-size="20px" />
-        <span class="text">全选</span>
+      <div v-if="cartBar === 1" class="all-check">
+        <van-checkbox @click="checkAllClick" :model-value="isCheckAll" icon-size="20px" />
+        <span class="text" @click="checkAllClick">全选</span>
       </div>
     </div>
     <div class="right">

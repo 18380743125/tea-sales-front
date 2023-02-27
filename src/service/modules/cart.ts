@@ -20,7 +20,7 @@ export function addCartReq(data: IAddCart) {
 
 // 删除购物车
 export function removeCartReq(id: number) {
-  return bRequest.post({
+  return bRequest.delete({
     url: `/api/v1/carts/${id}`
   })
 }

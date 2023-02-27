@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/store/modules/cart'
 import CartItem from './CartItem.vue'
 import type { IUpdateCart } from '@/types/cart'
+import { showConfirmDialog } from 'vant/lib/dialog'
 
 const cartStore = useCartStore()
 const { carts } = storeToRefs(cartStore)
@@ -16,6 +17,17 @@ const checkClick = (id: number, { checked, goodsId }: IUpdateCart) => {
 const countChange = (id: number, data: IUpdateCart) => {
   cartStore.updateCart(id, data)
 }
+
+// 删除购物车
+const removeCart = (id: number) => {
+  showConfirmDialog({
+    title: '确认删除该商品吗？'
+  })
+    .then(() => {
+      cartStore.removeCartAction(id)
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -27,7 +39,13 @@ const countChange = (id: number, data: IUpdateCart) => {
         <van-swipe-cell>
           <CartItem :item="item" @check-change="checkClick" @count-change="countChange" />
           <template #right>
-            <van-button square text="删除" type="danger" class="delete-button" />
+            <van-button
+              @click="removeCart(item.id)"
+              square
+              text="删除"
+              type="danger"
+              class="delete-button"
+            />
           </template>
         </van-swipe-cell>
       </template>

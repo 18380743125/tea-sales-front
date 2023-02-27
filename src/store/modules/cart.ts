@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { addCartReq, checkAllReq, queryCartReq, updateCartReq } from '@/service/modules/cart'
+import {
+  addCartReq,
+  checkAllReq,
+  queryCartReq,
+  removeCartReq,
+  updateCartReq
+} from '@/service/modules/cart'
 import type { IAddCart, IUpdateCart } from '@/types/cart'
 
 interface ICartState {
@@ -27,8 +33,6 @@ export const useCartStore = defineStore('cart', {
     },
     // 更新购物车
     async updateCart(id: number, data: IUpdateCart) {
-      console.log(typeof data.goodsId, data.goodsId)
-
       await updateCartReq(id, data)
       this.queryCartAction()
     },
@@ -36,6 +40,11 @@ export const useCartStore = defineStore('cart', {
     async checkAllAction() {
       const isCheckedAll = this.isCheckAll
       await checkAllReq(isCheckedAll ? 0 : 1)
+      this.queryCartAction()
+    },
+    // 删除购物车
+    async removeCartAction(id: number) {
+      await removeCartReq(id)
       this.queryCartAction()
     }
   },
@@ -78,6 +87,5 @@ export const useCartStore = defineStore('cart', {
       const checkedNums = this.checkedNums as number
       return state.carts.reduce((pre, item) => item.count + pre, 0) === checkedNums
     }
-  },
-  persist: true
+  }
 })
