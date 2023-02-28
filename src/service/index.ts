@@ -5,6 +5,8 @@ import { router } from '@/router'
 import { localCache } from '@/utils/cache'
 import { ConstEnum } from '@/enum/constant.enum'
 import { ErrorEnum } from '@/enum/error.enum'
+import { useMainStore } from '@/store/modules/main'
+import { pinia } from '@/store'
 
 // 错误信息对象
 const errorInfoObj = {
@@ -21,6 +23,8 @@ const errorInfoObj = {
 }
 // 需要重新登录
 const relist = [ErrorEnum.UNAUTHORIZED, ErrorEnum.LOGIN_EXPIRES]
+// main store
+const mainStore = useMainStore(pinia)
 
 const bRequest = new BRequest({
   timeout: TIME_OUT,
@@ -28,6 +32,8 @@ const bRequest = new BRequest({
   withCredentials: true,
   interceptors: {
     requestSuccessFn(config) {
+      // loading 状态
+      mainStore.loading = true
       // 携带令牌
       const accessToken = localCache.getCache(ConstEnum.ACCESS_TOKEN)
       const refreshToken = localCache.getCache(ConstEnum.REFRESH_TOKEN)
@@ -48,7 +54,12 @@ const bRequest = new BRequest({
           }, 2000)
         }
       }
+      mainStore.loading = false // loading 关闭
       return res
+    },
+    requestFailFn(err) {
+      mainStore.loading = false
+      Promise.reject(err)
     }
   }
 })

@@ -42,7 +42,11 @@ defineExpose({
         </van-badge>
       </div>
       <div v-if="cartBar === 1" class="all-check">
-        <van-checkbox @click="checkAllClick" :model-value="isCheckAll" icon-size="20px" />
+        <van-checkbox
+          @update:model-value="checkAllClick"
+          :model-value="isCheckAll"
+          icon-size="20px"
+        />
         <span class="text" @click="checkAllClick">全选</span>
       </div>
     </div>

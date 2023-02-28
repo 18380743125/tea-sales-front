@@ -25,7 +25,8 @@ export const useHomeStore = defineStore('home', {
     swipes: []
   }),
   actions: {
-    fetchHomeDataAction(page = 1) {
+    // 获取首页数据
+    async fetchHomeDataAction(page = 1) {
       if (!this.isMore) return
       getDiscountReq({ page }).then((res) => {
         const data = res.data

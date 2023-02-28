@@ -85,7 +85,9 @@ export const useCartStore = defineStore('cart', {
     // 是否全选
     isCheckAll(state) {
       const checkedNums = this.checkedNums as number
-      return state.carts.reduce((pre, item) => item.count + pre, 0) === checkedNums
+      return (
+        state.carts.reduce((pre, item) => item.count + pre, 0) === checkedNums && checkedNums !== 0
+      )
     }
   }
 })

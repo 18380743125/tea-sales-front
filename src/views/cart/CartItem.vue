@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, watch } from 'vue'
 import { goodsImgUrl } from '@/utils/goods.util'
 
 const emits = defineEmits(['checkChange', 'countChange'])
@@ -10,6 +10,13 @@ const props = defineProps<{
 
 const checked = ref(props.item.checked)
 const count = ref(props.item.count)
+
+watch(
+  () => props.item,
+  (newItem) => {
+    checked.value = newItem.checked
+  }
+)
 
 // checked 变化
 const onCheckChange = (checked: number) => {
@@ -25,7 +32,7 @@ const onCountChange = (count: number) => {
   <van-row class="item">
     <!-- 选择框 -->
     <van-col span="2" class="check">
-      <van-checkbox v-model="checked" @change="onCheckChange" icon-size="20px" />
+      <van-checkbox :model-value="checked" @update:model-value="onCheckChange" icon-size="20px" />
     </van-col>
 
     <!-- 图片 -->
@@ -86,15 +93,16 @@ const onCountChange = (count: number) => {
 }
 // check
 .item .check {
-  padding-left: 10px;
+  padding-left: 18px;
 }
 .item .img {
   position: relative;
   top: -6px;
+  left: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
 }
 .item .info {
-  margin-left: 22px;
+  margin-left: 32px;
   margin-top: -46px;
   .name {
     font-size: 28px;
