@@ -1,9 +1,9 @@
-import { onMounted, onUnmounted, onUpdated, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import throttle from '@/utils/throttle'
 
-export default function useScroll(elRef: Ref<HTMLElement>) {
-  let el: Window | HTMLElement = window
+export default function useScroll(elRef: Ref<HTMLElement | null>) {
+  let el: Window | HTMLElement | null = window
 
   const isReachBottom = ref(false)
   const clientHeight = ref(0)
@@ -36,11 +36,14 @@ export default function useScroll(elRef: Ref<HTMLElement>) {
 
   onMounted(() => {
     if (elRef) el = elRef.value
-    el.addEventListener('scroll', scrollListenerHandler)
+    el?.addEventListener('scroll', scrollListenerHandler)
+    console.log((el as HTMLElement).clientHeight)
+    console.log((el as HTMLElement).scrollHeight)
+    console.log((el as HTMLElement).scrollTop)
   })
 
   onUnmounted(() => {
-    el.removeEventListener('scroll', scrollListenerHandler)
+    el?.removeEventListener('scroll', scrollListenerHandler)
   })
 
   return {

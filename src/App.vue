@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import '@/assets/css/vant.less'
 import 'vant/es/toast/style'
 import 'vant/es/dialog/style'
 </script>

@@ -49,7 +49,7 @@ const onCountChange = (count: number) => {
       <div class="price">
         <div class="real">
           <span class="symbol">￥</span
-          >{{ (item.goods.price * item.goods.discount.rate).toFixed(2) }}
+          >{{ (item.goods.price * (item.goods.discount?.rate || 1)).toFixed(2) }}
         </div>
         <div class="origin"><span class="symbol">￥</span>{{ item.goods.price }}</div>
       </div>

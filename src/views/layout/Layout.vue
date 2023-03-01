@@ -57,10 +57,7 @@ const showCartBar = computed(
   .content {
     background-color: #f5f5f5;
     flex: 1;
-    overflow: scroll;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    .hide-scroll;
   }
   .tabbar {
     height: 104px;

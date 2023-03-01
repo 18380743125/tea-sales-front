@@ -2,7 +2,7 @@ import bRequest from '..'
 import type { IQueryGoods } from '@/types/goods'
 
 // 查询商品
-export function getGoodsReq(params: IQueryGoods) {
+export function fetchGoodsReq(params: IQueryGoods) {
   return bRequest.get({
     url: '/api/v1/goods',
     params
@@ -17,7 +17,7 @@ export function getGoodsByIdReq(id: number) {
 }
 
 // 查询类别
-export function getCategoriesReq() {
+export function queryCategoriesReq() {
   return bRequest.get({
     url: '/api/v1/category'
   })

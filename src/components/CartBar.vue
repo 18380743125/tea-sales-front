@@ -9,7 +9,7 @@ const cartStore = useCartStore()
 const mainStore = useMainStore()
 // 网络请求
 cartStore.queryCartAction()
-const { totalRealMoney, checkedNums, isCheckAll } = storeToRefs(cartStore)
+const { totalRealMoney, checkedNums, isCheckAll, count } = storeToRefs(cartStore)
 const { cartBar } = storeToRefs(mainStore)
 
 // hooks
@@ -30,24 +30,29 @@ defineExpose({
 })
 </script>
 <template>
+  <!-- 移动的球 -->
   <div class="add-cart" ref="addCartRef">
     <div ref="addCartInnerRef">+</div>
   </div>
 
   <div class="cart-bar">
     <div class="left">
+      <!-- 购物车图标 -->
       <div v-show="cartBar === 2" class="cart" ref="cartRef">
         <van-badge :content="checkedNums">
           <van-icon name="cart" />
         </van-badge>
       </div>
+      <!-- 在购物车页面 -->
       <div v-if="cartBar === 1" class="all-check">
         <van-checkbox
           @update:model-value="checkAllClick"
           :model-value="isCheckAll"
           icon-size="20px"
-        />
-        <span class="text" @click="checkAllClick">全选</span>
+          :disabled="count === 0"
+        >
+          <template #default> <span class="text">全选</span> </template>
+        </van-checkbox>
       </div>
     </div>
     <div class="right">
@@ -86,9 +91,9 @@ defineExpose({
 
 .cart-bar {
   position: fixed;
-  bottom: 88px;
+  bottom: 92px;
   width: 100%;
-  height: 96px;
+  height: 100px;
   background-color: #fff;
   display: flex;
   align-items: center;
@@ -107,13 +112,11 @@ defineExpose({
     .all-check {
       display: flex;
       align-items: center;
-      margin-top: -12px;
+      margin-top: 0px;
+
       .text {
         font-size: 28px;
         color: #333;
-        padding-left: 16px;
-        position: relative;
-        top: 2px;
       }
     }
   }

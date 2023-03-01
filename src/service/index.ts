@@ -1,4 +1,4 @@
-import { showToast } from 'vant'
+import { showLoadingToast, showToast, closeToast } from 'vant'
 import BRequest from './request'
 import { BASE_URL, TIME_OUT } from './config'
 import { router } from '@/router'
@@ -34,6 +34,8 @@ const bRequest = new BRequest({
     requestSuccessFn(config) {
       // loading 状态
       mainStore.loading = true
+      showLoadingToast('加载中')
+
       // 携带令牌
       const accessToken = localCache.getCache(ConstEnum.ACCESS_TOKEN)
       const refreshToken = localCache.getCache(ConstEnum.REFRESH_TOKEN)
@@ -55,10 +57,12 @@ const bRequest = new BRequest({
         }
       }
       mainStore.loading = false // loading 关闭
+      closeToast()
       return res
     },
     requestFailFn(err) {
       mainStore.loading = false
+      closeToast()
       Promise.reject(err)
     }
   }

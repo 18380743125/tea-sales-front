@@ -32,8 +32,9 @@ export const useHomeStore = defineStore('home', {
         const data = res.data
         if (res.message === 'ok') {
           if (data[0].length === 0) this.isMore = false
-          if (page === 1) this.goods = data[0]
-          else this.goods.push(...data[0])
+          if (page === 1) {
+            this.goods = data[0]
+          } else this.goods.push(...data[0])
         }
         if (this.swipes.length < 6) {
           this.swipes.push(..._getSwipes(this.goods))
