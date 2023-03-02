@@ -2,7 +2,7 @@
 import { defineProps, inject } from 'vue'
 import type { Ref } from 'vue'
 import { useCartStore } from '@/store/modules/cart'
-import { goodsImgUrl } from '@/utils/goods.util'
+import { goodsImgUrl } from '@/utils/image.util'
 import type CartBar from '@/components/CartBar.vue'
 
 defineProps<{

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, ref, watch } from 'vue'
-import { goodsImgUrl } from '@/utils/goods.util'
+import { goodsImgUrl } from '@/utils/image.util'
 
 const emits = defineEmits(['checkChange', 'countChange'])
 

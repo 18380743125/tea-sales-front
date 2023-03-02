@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { goodsImgUrl } from '@/utils/goods.util'
+import { goodsImgUrl } from '@/utils/image.util'
 
 defineProps<{
   swipes: Record<string, any>[]

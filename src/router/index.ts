@@ -4,7 +4,6 @@ import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { useMainStore } from '@/store/modules/main'
 import { pinia } from '@/store'
-import { useCartStore } from '@/store/modules/cart'
 
 const routes = [
   {

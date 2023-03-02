@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-import { goodsImgUrl } from '@/utils/goods.util'
+import { goodsImgUrl } from '@/utils/image.util'
 import { useCartStore } from '@/store/modules/cart'
 
 import type { Ref } from 'vue'

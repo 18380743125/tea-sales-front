@@ -6,6 +6,7 @@ import { localCache } from '@/utils/cache'
 import { loginReq } from '@/service/modules/login'
 import type { Router } from 'vue-router'
 import type { ILoginForm } from '@/types/user'
+import { fetchUserReq } from '@/service/modules/user'
 
 interface IUserState {
   user: Record<string, any>
@@ -23,6 +24,7 @@ export const useUserStore = defineStore('user', {
     roles: localCache.getCache(ConstEnum.ROLES ?? {})
   }),
   actions: {
+    // 登录 action
     async loginAction(params: ILoginForm, { router, switchCaptcha }: LoginActionOptions) {
       const result = await loginReq(params)
       if (result.message === 'ok') {
@@ -40,6 +42,14 @@ export const useUserStore = defineStore('user', {
       } else {
         switchCaptcha()
       }
+    },
+    async fetchUserAction() {
+      const result = await fetchUserReq(this.user.id)
+      if (result.message !== 'ok') return
+      const roles = result.data.roles
+      delete result.data.roles
+      this.roles = roles
+      this.user = result.data
     }
   },
   persist: true

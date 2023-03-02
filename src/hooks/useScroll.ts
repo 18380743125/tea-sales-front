@@ -37,9 +37,6 @@ export default function useScroll(elRef: Ref<HTMLElement | null>) {
   onMounted(() => {
     if (elRef) el = elRef.value
     el?.addEventListener('scroll', scrollListenerHandler)
-    console.log((el as HTMLElement).clientHeight)
-    console.log((el as HTMLElement).scrollHeight)
-    console.log((el as HTMLElement).scrollTop)
   })
 
   onUnmounted(() => {
