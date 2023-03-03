@@ -1,16 +1,20 @@
 <script setup lang="ts">
+import { ref, provide } from 'vue'
 import { storeToRefs } from 'pinia'
 import { showConfirmDialog, showToast } from 'vant'
-import { useRouter } from 'vue-router'
 
-import ProfileInfo from './c-cpns/ProfileInfo.vue'
+import ProfileTop from './c-cpns/ProfileTop.vue'
 import ProfileOrder from './c-cpns/ProfileOrder.vue'
 import ProfileFunction from './c-cpns/ProfileFunction.vue'
+import ProfileInfo from './c-cpns/ProfileInfo.vue'
+
 import { logoutReq } from '@/service/modules/login'
 import { localCache } from '@/utils/cache'
 import { useUserStore } from '@/store/modules/user'
+import { router } from '@/router'
 
-const router = useRouter()
+const showInfo = ref(false)
+const showTopUp = ref(false)
 
 // store
 const userStore = useUserStore()
@@ -18,6 +22,9 @@ const { user } = storeToRefs(userStore)
 
 // 获取用户信息
 const fetchUser = () => userStore.fetchUserAction()
+
+provide('fetchUser', fetchUser)
+provide('user', user)
 
 // 处理注销登录
 const handleLogout = () => {
@@ -36,14 +43,17 @@ const handleLogout = () => {
 
 <template>
   <div class="profile">
-    <!-- 信息 -->
-    <ProfileInfo :user="user" :fetch-user="fetchUser" />
+    <!-- 个人信息 -->
+    <ProfileInfo v-if="showInfo" v-model:show="showInfo" :user="user" />
+
+    <!-- profile top -->
+    <ProfileTop :user="user" />
 
     <!-- 我的订单 -->
     <ProfileOrder />
 
     <!-- 常用功能 -->
-    <ProfileFunction />
+    <ProfileFunction v-model:showInfo="showInfo" />
 
     <div class="logout" @click="handleLogout">
       <van-button round block type="primary">退出登录</van-button>
@@ -62,7 +72,7 @@ const handleLogout = () => {
   .logout {
     height: 50px;
     border-radius: 14px;
-    margin: 60px auto 80px;
+    margin: 90px auto 80px;
     width: 93%;
   }
 }

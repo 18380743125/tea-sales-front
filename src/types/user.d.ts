@@ -30,9 +30,11 @@ export interface IQueryUser extends IQuery {
 export interface IUpdateUser {
   gender?: string
 
-  age?: number
+  age?: number | string
 
   phone?: string
 
   banned?: string
+
+  account?: number | string
 }

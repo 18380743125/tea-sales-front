@@ -20,8 +20,8 @@ interface LoginActionOptions {
 
 export const useUserStore = defineStore('user', {
   state: (): IUserState => ({
-    user: localCache.getCache(ConstEnum.USER ?? {}),
-    roles: localCache.getCache(ConstEnum.ROLES ?? {})
+    user: {},
+    roles: {}
   }),
   actions: {
     // 登录 action
@@ -36,6 +36,8 @@ export const useUserStore = defineStore('user', {
         this.user = data.user
         localCache.setCache(ConstEnum.ACCESS_TOKEN, data.accessToken)
         localCache.setCache(ConstEnum.REFRESH_TOKEN, data.refreshToken)
+        delete data.accessToken
+        delete data.refreshToken
         setTimeout(() => {
           router.push('/user')
         }, 2000)
@@ -50,6 +52,8 @@ export const useUserStore = defineStore('user', {
       delete result.data.roles
       this.roles = roles
       this.user = result.data
+      localCache.setCache(ConstEnum.ROLES, roles)
+      localCache.setCache(ConstEnum.USER, result.data)
     }
   },
   persist: true

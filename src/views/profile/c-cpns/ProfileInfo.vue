@@ -1,171 +1,132 @@
 <script setup lang="ts">
-import { defineProps, computed, toRefs, ref, watch, toRaw } from 'vue'
-import type { UploaderInstance, UploaderFileListItem } from 'vant/lib/uploader'
+import { onUnmounted, reactive, toRaw, inject } from 'vue'
+import { useMainStore } from '@/store/modules/main'
+import { phoneReg } from '@/utils/regex'
+import type { IUpdateUser } from '@/types/user'
+import { updateUserReq } from '@/service/modules/user'
+import { showToast } from 'vant'
 
-import { router } from '@/router'
-import { userAvatarUrl } from '@/utils/image.util'
-import { changeAvatarReq } from '@/service/modules/user'
-
-const props = defineProps<{
-  user: Record<string, any>
-  fetchUser: Function
-}>()
-const { user } = toRefs(props)
-const { fetchUser } = toRaw(props)
-
-const file = ref()
-const fileRef = ref<UploaderInstance>()
-
-// computed
-const name = computed(() => user.value.name || '请先登录')
-const avatarUrl = computed(() => userAvatarUrl(user.value.avatar))
-
-// 上传头像
-watch(file, async (newValue: UploaderFileListItem[]) => {
-  const avatar = newValue[0].file as File
-  await changeAvatarReq(avatar)
-  fetchUser()
-})
-
-// 更换头像
-const changeAvatar = () => {
-  fileRef.value?.chooseFile()
+const rules = {
+  phone: [
+    { required: true, message: '请输入手机号' },
+    {
+      pattern: phoneReg,
+      message: '手机号格式错误'
+    }
+  ],
+  age: [
+    { required: true, message: '请输入年龄' },
+    {
+      validator: (value: number) => (value >= 0 && value <= 199 ? true : false),
+      message: '年龄限制到1~199'
+    }
+  ]
 }
 
-// 去登录
-const goLogin = () => {
-  if (user.value) return
-  else router.push('/login')
+const props = defineProps<{
+  show: boolean
+  user: Record<string, any>
+}>()
+const emit = defineEmits(['update:show'])
+const user = toRaw(props.user)
+const fetchUser = inject('fetchUser') as Function
+
+const info = reactive({
+  name: user.name,
+  gender: user.gender,
+  age: user.age,
+  phone: user.phone
+})
+
+const mainStore = useMainStore()
+mainStore.title = '个人信息'
+
+onUnmounted(() => {
+  mainStore.title = '我的'
+})
+
+// 保存
+const saveClick = async (values: IUpdateUser) => {
+  values.age = parseInt(values.age as string)
+  const result = await updateUserReq(user.id, values)
+  if (result.message === 'ok') {
+    showToast('保存成功')
+    setTimeout(() => {
+      fetchUser?.()
+      emit('update:show', false)
+    }, 2000)
+  }
 }
 </script>
 <template>
-  <div class="info">
-    <!-- 头像、用户名 -->
-    <van-row class="avatar" @click="goLogin">
-      <van-col span="4" offset="1">
-        <van-image @click.stop="changeAvatar" :src="avatarUrl" class="img" radius="6" />
-        <van-uploader ref="fileRef" v-show="false" v-model="file" />
-      </van-col>
-      <van-col class="text">{{ name }}</van-col>
-    </van-row>
+  <div :class="['info', 'top-page']">
+    <!-- 返回图标 -->
+    <div class="back" @click="emit('update:show', false)">
+      <van-icon name="arrow-left" />
+    </div>
 
-    <!-- 金额相关 -->
-    <van-row class="assets">
-      <!-- 资产 -->
-      <van-col span="6">
-        <span class="num">120</span>
-        <span class="unit">元</span>
-        <div class="text">资产</div>
-      </van-col>
+    <!-- 表单 -->
+    <van-form @submit="saveClick">
+      <van-cell-group inset>
+        <van-field v-model="info.name" name="name" label="用户名" disabled />
+        <van-field
+          v-model="info.phone"
+          name="phone"
+          label="手机号"
+          placeholder="请输入手机号"
+          :rules="rules.phone"
+          style="margin-top: 10px"
+        />
 
-      <!-- 红包 -->
-      <van-col span="6" offset="2">
-        <span class="num">0.00</span>
-        <span class="unit">元</span>
-        <div class="text">红包</div>
-      </van-col>
+        <van-field
+          style="margin-top: 10px"
+          v-model="info.age"
+          name="age"
+          label="年龄"
+          placeholder="请输入年龄"
+          :rules="rules.age"
+        />
 
-      <!-- 优惠卷 -->
-      <van-col span="6" offset="2">
-        <span class="num">0</span>
-        <span class="unit">张</span>
-        <div class="text">优惠卷</div>
-      </van-col>
-    </van-row>
+        <van-field name="gender" label="单选框" style="margin-top: 10px">
+          <template #input>
+            <van-radio-group v-model="info.gender" direction="horizontal">
+              <van-radio name="1">男</van-radio>
+              <van-radio name="0">女</van-radio>
+            </van-radio-group>
+          </template>
+        </van-field>
+      </van-cell-group>
 
-    <!-- 省钱会员 -->
-    <van-row class="vip">
-      <van-col span="16" offset="1" class="left">
-        <div class="top">
-          <van-icon size="26" color="#652c0c" name="vip-card" />
-          <span class="text">省钱会员</span>
-        </div>
-        <div class="bottom">每月最高可省<span style="color: #e5854f"> 90 </span>元</div>
-      </van-col>
-      <van-col span="7" class="right">
-        <van-button class="btn" color="linear-gradient(to right, #fe8b3a, #fd6d3b)"
-          >立即开通</van-button
+      <!-- 按钮 -->
+      <div class="save">
+        <van-button
+          class="btn"
+          style="height: 40px; border-radius: 4px"
+          type="primary"
+          native-type="submit"
+          block
+          >保存</van-button
         >
-      </van-col>
-    </van-row>
+      </div>
+    </van-form>
   </div>
 </template>
 
 <style lang="less" scoped>
 .info {
-  background: linear-gradient(to bottom right, #8adf71, #7adf71, #5adf71, #4adf71, #3adf71);
-
-  // 头像
-  .avatar {
-    padding-top: 40px;
-    .img {
-      width: 120px;
-      object-fit: cover;
-    }
-    .text {
-      color: #fff;
-      display: flex;
-      align-items: center;
-      margin-left: 10px;
-    }
-  }
-
-  // 资产
-  .assets {
-    text-align: center;
+  padding-top: 30px;
+  .back {
+    position: fixed;
+    top: 28px;
+    left: 30px;
     color: #fff;
-    margin-top: 24px;
-    .num {
-      font-size: 34px;
-    }
-    .unit {
-      font-size: 22px;
-      margin-left: 6px;
-    }
-    .text {
-      font-size: 32px;
-      margin-top: 6px;
-    }
+    font-size: 36px;
   }
 
-  // vip
-  .vip {
-    height: 146px;
-    background: linear-gradient(to bottom right, #ffe4c7, #fbd9b4, #fdd0a7, #ffbd8a, #fdc18d);
+  .save {
     width: 96%;
-    margin: 36px auto;
-    border-radius: 10px;
-    border-top: 2px solid #fff;
-    position: relative;
-    top: 10px;
-    .left {
-      .top {
-        padding-top: 12px;
-        position: relative;
-        .text {
-          color: #652c0c;
-          font-size: 28px;
-          position: absolute;
-          top: 24px;
-          left: 60px;
-        }
-      }
-      .bottom {
-        color: #855634;
-        margin-top: 12px;
-        font-size: 32px;
-      }
-    }
-
-    .right {
-      margin-top: 36px;
-      .btn {
-        height: 60px;
-        border-radius: 40px;
-        font-size: 26px;
-        overflow: hidden;
-      }
-    }
+    margin: 0 auto;
+    margin-top: 60px;
   }
 }
 </style>

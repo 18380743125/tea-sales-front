@@ -1,12 +1,21 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import TopUp from './TopUp.vue'
+
+defineEmits(['update:showInfo'])
+
+const showTopUp = ref(false)
+</script>
+
 <template>
   <div class="function">
+    <TopUp v-if="showTopUp" v-model:showTopUp="showTopUp" />
+
     <h4 class="title">常用功能</h4>
     <van-cell-group>
-      <van-cell is-link title="充值" />
-      <van-cell title="个人信息" is-link />
-      <van-cell title="个人名片" is-link />
-      <van-cell title="二维码" is-link />
+      <van-cell @click="showTopUp = true" is-link title="充值" />
+      <van-cell @click="$emit('update:showInfo', true)" title="个人信息" is-link />
+      <van-cell to="/address" title="收货地址" is-link />
     </van-cell-group>
   </div>
 </template>

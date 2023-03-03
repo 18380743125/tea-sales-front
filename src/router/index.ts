@@ -52,6 +52,13 @@ const routes = [
         meta: {
           title: '我的'
         }
+      },
+      {
+        path: 'address',
+        component: () => import('@/views/address/Address.vue'),
+        meta: {
+          title: '地址列表'
+        }
       }
     ]
   },
