@@ -2,7 +2,7 @@ import { IQuery } from './common'
 
 export interface IQueryOrder extends IQuery {
   goodsName?: string
-  state?: string
+  state?: string | number
   uname?: string
   phone?: string
 }

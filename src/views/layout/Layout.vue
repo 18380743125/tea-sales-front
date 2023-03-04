@@ -12,7 +12,7 @@ provide('cartBarRef', cartBarRef)
 // store
 const mainStore = useMainStore()
 const cartStore = useCartStore()
-const { title, cartBar } = storeToRefs(mainStore)
+const { title, cartBar, showTabbar } = storeToRefs(mainStore)
 const { count, totalRealMoney } = storeToRefs(cartStore)
 
 // computed
@@ -43,7 +43,7 @@ const showCartBar = computed(
     </div>
 
     <!-- 底部导航栏 -->
-    <div class="tabbar">
+    <div class="tabbar" v-show="showTabbar">
       <Tabbar />
     </div>
   </div>

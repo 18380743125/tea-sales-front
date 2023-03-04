@@ -88,6 +88,10 @@ export const useCartStore = defineStore('cart', {
       return (
         state.carts.reduce((pre, item) => item.count + pre, 0) === checkedNums && checkedNums !== 0
       )
+    },
+    // 选中的购物车
+    checkGoods(state) {
+      return state.carts.filter((item) => item.checked)
     }
   }
 })

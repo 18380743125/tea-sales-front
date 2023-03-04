@@ -1,42 +1,52 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useOrderStore from '@/store/modules/order'
+import { router } from '@/router'
+
+const orderStore = useOrderStore()
+
+const goOrder = (state = 0) => {
+  orderStore.state = state
+  router.push('/order')
+}
+</script>
 <template>
   <div class="order">
     <!-- title -->
     <van-row class="title">
       <van-col span="6">我的订单</van-col>
       <van-col span="8" offset="10" class="all">
-        <span>查看全部</span>
+        <span @click="goOrder(0)">查看全部</span>
         <van-icon class="icon" name="arrow" size="13" />
       </van-col>
     </van-row>
 
     <!-- order status -->
-    <van-grid :border="false" :column-num="5">
+    <van-grid :border="false" :column-num="4">
       <van-grid-item text="待发货">
         <template #icon>
-          <van-icon name="send-gift-o" color="#00df71" size="30" />
+          <van-icon @click="goOrder(1)" name="send-gift-o" color="#00df71" size="30" />
         </template>
       </van-grid-item>
       <van-grid-item text="待收货">
         <template #icon>
-          <van-icon name="logistics" color="#00df71" size="30" />
+          <van-icon @click="goOrder(2)" name="logistics" color="#00df71" size="30" />
         </template>
       </van-grid-item>
       <van-grid-item text="已完成">
         <template #icon>
-          <van-icon name="chat-o" color="#00df71" size="30" />
+          <van-icon @click="goOrder(3)" name="chat-o" color="#00df71" size="30" />
         </template>
       </van-grid-item>
       <van-grid-item text="已取消">
         <template #icon>
-          <van-icon name="pause-circle-o" color="#00df71" size="30" />
+          <van-icon @click="goOrder(4)" name="pause-circle-o" color="#00df71" size="30" />
         </template>
       </van-grid-item>
-      <van-grid-item text="退货服务">
+      <!-- <van-grid-item text="退货服务">
         <template #icon>
           <van-icon name="tosend" color="#00df71" size="30" />
         </template>
-      </van-grid-item>
+      </van-grid-item> -->
     </van-grid>
   </div>
 </template>

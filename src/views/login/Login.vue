@@ -18,7 +18,7 @@ const { rules } = useRules()
 const { isCanClick, handleBlur } = useFormDisable(formRef, 3)
 
 // 登录
-const { loginForm, onSubmit } = useLogin(switchCaptcha, isCanClick)
+const { loginForm, onSubmit } = useLogin(switchCaptcha)
 </script>
 
 <template>

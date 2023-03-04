@@ -10,7 +10,7 @@ const mainStore = useMainStore()
 // 网络请求
 cartStore.queryCartAction()
 const { totalRealMoney, checkedNums, isCheckAll, count } = storeToRefs(cartStore)
-const { cartBar } = storeToRefs(mainStore)
+const { cartBar, hideTabbar } = storeToRefs(mainStore)
 
 // hooks
 const { addCartRef, addCartInnerRef, cartRef, start } = useAddCartAnimation()
@@ -35,7 +35,7 @@ defineExpose({
     <div ref="addCartInnerRef">+</div>
   </div>
 
-  <div class="cart-bar">
+  <div class="cart-bar" :style="{ bottom: hideTabbar ? '0px' : '46px' }">
     <div class="left">
       <!-- 购物车图标 -->
       <div v-show="cartBar === 2" class="cart" ref="cartRef">
@@ -57,7 +57,11 @@ defineExpose({
     </div>
     <div class="right">
       <div class="money"><span style="font-size: 15px">￥</span>{{ totalRealMoney }}</div>
-      <div class="btn" :style="{ backgroundColor: checkedNums ? '#00df71' : '#80efb8' }">
+      <div
+        @click="$router.push('/place_order')"
+        class="btn"
+        :style="{ backgroundColor: checkedNums ? '#00df71' : '#80efb8' }"
+      >
         <span class="pay">去支付</span>
         <span class="count" v-show="checkedNums !== 0">({{ checkedNums }})</span>
       </div>

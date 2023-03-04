@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { showToast } from 'vant'
-import type { AddressListAddress } from 'vant'
 import { router } from '@/router'
 import useAddressStore from '@/store/modules/address'
-import type EditAddressVue from './EditAddress.vue'
+import type { AddressListAddress } from 'vant'
 
-const showEdit = ref(false)
 const addressStore = useAddressStore()
 addressStore.fetchAddresses()
 
 const { addresses } = storeToRefs(addressStore)
 
-const onAdd = () => showToast('新增地址')
-const onEdit = (item, index) => showToast('编辑地址:' + index)
+const onAdd = () => {
+  addressStore.editAddress = undefined
+  router.push('/address/edit')
+}
+const onEdit = (item: AddressListAddress) => {
+  addressStore.editAddress = item
+  router.push('/address/edit')
+}
 </script>
 <template>
   <div :class="['address', 'top-page']">
@@ -23,10 +25,10 @@ const onEdit = (item, index) => showToast('编辑地址:' + index)
       <van-icon name="arrow-left" />
     </div>
 
-    <EditAddressVue v-if="showEdit" v-model:showEdit="showEdit" />
+    <van-empty v-if="!addresses.length" description="快去新增一个吧" />
 
     <van-address-list
-      :list="addresses as AddressListAddress[]"
+      :list="addresses"
       default-tag-text="默认地址"
       :switchable="false"
       @add="onAdd"

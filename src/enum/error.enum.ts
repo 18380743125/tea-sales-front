@@ -10,5 +10,6 @@ export enum ErrorEnum {
   LOGIN_EXPIRES = 'login_expires', // 登录过期
   FORBIDDEN = 'forbidden', // 禁止访问
   NO_ADMIN_AUTH = 'no_admin_auth', // 无管理员权限
-  PASSWORD_ERROR = 'password_error' // 密码错误
+  PASSWORD_ERROR = 'password_error', // 密码错误
+  UNDER_STOCK = 'under_stock' //库存不足
 }

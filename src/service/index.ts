@@ -19,7 +19,8 @@ const errorInfoObj = {
   [ErrorEnum.NO_EXISTS]: '操作不存在！',
   [ErrorEnum.CAPTCHA_ERROR]: '验证码错误！',
   [ErrorEnum.CAPTCHA_EXPIRES]: '验证码过期！',
-  [ErrorEnum.LOGIN_ERROR]: '用户名或密码错误！'
+  [ErrorEnum.LOGIN_ERROR]: '用户名或密码错误！',
+  [ErrorEnum.UNDER_STOCK]: '库存不足！'
 }
 // 需要重新登录
 const relist = [ErrorEnum.UNAUTHORIZED, ErrorEnum.LOGIN_EXPIRES]

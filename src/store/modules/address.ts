@@ -1,15 +1,16 @@
 import { defineStore } from 'pinia'
+import type { AddressListAddress } from 'vant'
 import { fetchAddressReq } from '@/service/modules/address'
 
 interface IState {
-  addresses: Record<string, any>[]
-  editAddress: Record<string, any>
+  addresses: AddressListAddress[]
+  editAddress: AddressListAddress | any
 }
 
 const useAddressStore = defineStore('address', {
   state: (): IState => ({
     addresses: [],
-    editAddress: {}
+    editAddress: undefined
   }),
   actions: {
     async fetchAddresses() {
@@ -21,7 +22,17 @@ const useAddressStore = defineStore('address', {
         })
       }
     }
-  }
+  },
+  getters: {
+    defaultAddress(state) {
+      const address = state.addresses.find((item) => {
+        if (typeof item.isDefault === 'boolean') return item
+      })
+      if (!address) return this.addresses[0]
+      else return address
+    }
+  },
+  persist: true
 })
 
 export default useAddressStore

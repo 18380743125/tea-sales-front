@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/modules/cart'
 
 import type { Ref } from 'vue'
 import type CartBar from '@/components/CartBar.vue'
+import { router } from '@/router'
 
 // props
 defineProps<{
@@ -27,10 +28,14 @@ const addCart = (e: Event, item: Record<string, any>) => {
   cartBarRef?.value.addCart(e.currentTarget as HTMLElement)
 }
 
+const goDetail = (id: number) => {
+  router.push(`/detail/${id}`)
+}
+
 const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).toFixed(2)
 </script>
 <template>
-  <div class="item">
+  <div class="item" @click="goDetail(item.id)">
     <!-- 图片 -->
     <img
       style="object-fit: cover; width: 100%"
@@ -67,7 +72,7 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
       <!-- 额外信息 -->
       <div class="extra">
         <div class="desc">{{ item.goods.description }}</div>
-        <div class="cart" @click="addCart($event, item)">
+        <div class="cart" @click.stop="addCart($event, item)">
           <van-badge :show-zero="false" :content="item.goods?.carts[0]?.count ?? 0" :max="99">
             <van-icon name="shopping-cart-o" />
           </van-badge>
