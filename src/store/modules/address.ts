@@ -26,7 +26,7 @@ const useAddressStore = defineStore('address', {
   getters: {
     defaultAddress(state) {
       const address = state.addresses.find((item) => {
-        if (typeof item.isDefault === 'boolean') return item
+        if (typeof item.isDefault === 'boolean' && item.isDefault) return item
       })
       if (!address) return this.addresses[0]
       else return address

@@ -9,6 +9,21 @@ export function queryEvaluateReq(params: IQueryEvaluate) {
   })
 }
 
+// 发表评价
+export function createEvaluateReq(imgs: File[], data: any) {
+  const fd = new FormData()
+  fd.append('star', data.star)
+  fd.append('content', data.content)
+  fd.append('orderId', data.orderId)
+  if (imgs.length > 0) {
+    for (const file of imgs) fd.append('imgs', file)
+  }
+  return bRequest.post({
+    url: '/api/v1/evaluate',
+    data: fd
+  })
+}
+
 // 删除评价
 export function removeEvaluateReq(id: number) {
   return bRequest.delete({

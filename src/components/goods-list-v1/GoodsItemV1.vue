@@ -32,10 +32,20 @@ const goDetail = (id: number) => {
   router.push(`/detail/${id}`)
 }
 
+// 评价条数
+const evaluateNums = (item: Record<string, any>) => {
+  return (
+    item.goods?.orders?.reduce((pre, item) => {
+      if (item.evaluate) return pre + 1
+      else return pre
+    }, 0) || 0
+  )
+}
+
 const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).toFixed(2)
 </script>
 <template>
-  <div class="item" @click="goDetail(item.id)">
+  <div class="item" @click="goDetail(item.goods.id)">
     <!-- 图片 -->
     <img
       style="object-fit: cover; width: 100%"
@@ -51,7 +61,9 @@ const realPrice = (item: Record<string, any>) => (item.rate * item.goods.price).
       </div>
 
       <!-- 评价 -->
-      <div class="evaluate">还没有评论</div>
+      <div class="evaluate">
+        {{ evaluateNums(item) ? `有 ${evaluateNums(item)} 条评价` : '还没有评价' }}
+      </div>
 
       <!-- 价格 -->
       <div class="price">

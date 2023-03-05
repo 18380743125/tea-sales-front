@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import useOrderStore from '@/store/modules/order'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { showConfirmDialog, showToast } from 'vant'
+
+import useOrderStore from '@/store/modules/order'
 import { goodsImgUrl } from '@/utils/image.util'
 import { getOrderStateText } from '@/utils/order.util'
-import { showConfirmDialog, showToast } from 'vant'
 import { updateOrderReq } from '@/service/modules/order'
+
+const router = useRouter()
 
 // store
 const orderStore = useOrderStore()
@@ -49,6 +53,12 @@ const okClick = (o: any) => {
       })
     })
     .catch(() => {})
+}
+
+// 去评价
+const goEvaluate = (o: Record<string, any>) => {
+  orderStore.operationOrder = o
+  router.push('evaluate')
 }
 </script>
 
@@ -106,7 +116,13 @@ const okClick = (o: any) => {
               :span="8"
               v-show="o.state === '3'"
             >
-              <van-button size="small" type="success">去评价</van-button>
+              <van-button
+                :disabled="!!o.evaluate"
+                @click="goEvaluate(o)"
+                size="small"
+                type="success"
+                >{{ o.evaluate ? '已评价' : '去评价' }}</van-button
+              >
             </van-col>
           </van-row>
         </template>

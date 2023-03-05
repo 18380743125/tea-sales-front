@@ -92,7 +92,11 @@ const routes = [
       title: '我的订单'
     }
   },
-
+  {
+    path: '/evaluate',
+    name: 'evaluate',
+    component: () => import('@/views/evaluate/Evaluate.vue')
+  },
   {
     path: '/:pathMatch(.*)',
     redirect: '/home'
